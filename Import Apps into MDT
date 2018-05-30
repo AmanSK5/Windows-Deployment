@@ -1,0 +1,38 @@
+#This script will let you import powershell scripts in the format of an application you can install in a task 
+#sequence in MDT. 
+#This must be run as an ADMIN!
+
+$MDTFolder = "D:\MDTBuildLab"   #Put the Path and folder of where your deployment share is here 
+$ImportFolder = "D:\Setup\MDTApplications"   #Put the path of and folder of where you want to put your scripts
+
+try {
+    Import-Module "C:\Program Files\Microsoft Deployment Toolkit\bin\MicrosoftDeploymentToolkit.psd1"
+}
+catch {
+    Write-Error 'The MDT PS module could not be loaded correctly, exit'
+    Exit
+}
+
+if (!(test-path DS001:)) {
+    
+         New-PSDrive -Name "DS001" -PSProvider MDTProvider -Root $MDTFolder
+}
+
+
+$Install = "Copy - TEST.ps1" #Put the exact name of the powershell script here
+$InstallFolder = "D:\Setup\MDTApplications\Scripts"  #Put the exact folder path to the script here
+$InstallLongAppName = "Copy - Test"  #Put the exact name you want shown in the MDT applicaiton list 
+$CommandLine = "PowerShell.exe -ExecutionPolicy ByPass -File Copy - TEST.ps1" #Put the exact name of the script here
+        
+import-MDTApplication -path "DS001:\Applications" `
+                        -enable "True"  `
+                        -Name $InstallLongAppName  `
+                        -ShortName $InstallLongAppName  `
+                        -Version ""  `
+                        -Publisher ""  `
+                        -Language ""  `
+                        -CommandLine $CommandLine  `
+                        -WorkingDirectory ".\Applications\$InstallLongAppName"  `
+                        -ApplicationSourcePath $InstallFolder  `
+                        -DestinationFolder $InstallLongAppName
+    
