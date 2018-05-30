@@ -1,2 +1,2 @@
 # Windows-Deployment
-Scripts to help when creating images for deployment
+Scripts to help you when you're creating images for deployment
